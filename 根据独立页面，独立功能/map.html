@@ -1,0 +1,67 @@
+<!DOCTYPE html>  
+<html>
+<head>  
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+	 <meta name="keywords" content="定位">
+	 <meta http-equiv="content-type" content="text/html; charset=utf-8">
+	 <!--移动设备优先-->
+	 <meta name="viewport" content="width=device-width, initial-scale=1">
+	 <!--禁用缩放-->
+	 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>选取位置</title>  
+	<style type="text/css">  
+		html{height:100%}  
+		body{height:100%;margin:0px;padding:0px}  
+		#container{height:100%}  
+	</style>  
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=你申请的百度AK"></script>
+</head>  
+ 
+<body>  
+<div id="container">
+</div> 
+<script type="text/javascript"> 
+	//找到container容器
+	var map = new BMap.Map("container");
+	// 创建地图实例，初始化地图信息
+	var point = new BMap.Point(116.404, 39.915);
+	// 初始化地图，设置中心点坐标和地图级别  
+	map.centerAndZoom(point, 15);
+	var geolocation = new BMap.Geolocation();
+	var marker = new BMap.Marker(point);        // 创建标注    
+	map.addOverlay(marker);                     // 将标注添加到地图中 	
+	//浏览器定位函数			 
+	geolocation.getCurrentPosition(function(r){
+		// console.log(r.point.lng+' = '+r.point.lat);
+		if(this.getStatus() == BMAP_STATUS_SUCCESS){
+			var mk = new BMap.Marker(r.point);
+			map.addOverlay(mk);
+			map.panTo(r.point);
+			// 创建地理编码实例      
+			var myGeo = new BMap.Geocoder();  	
+			// 根据坐标得到地址描述    
+			// r.point.lng, r.point.lat
+			// 创建地图实例  ,快速定位到指定经纬度
+			var point = new BMap.Point(r.point.lng, r.point.lat);
+			// 创建点坐标  ,信息详细级别
+			map.centerAndZoom(point, 15);
+			//address.innerHTML = r.point.lng+','+r.point.lat;
+			map.addEventListener("click",function(e){
+				//alert("当前坐标"+e.point.lng + "," + e.point.lat);
+				prompt("当前选择位置", e.point.lng + "," + e.point.lat);
+			});
+		}
+		else {
+			alert('请开启定位权限'+this.getStatus());
+		}        
+	});
+	//添加平移缩放控件
+	map.addControl(new BMap.NavigationControl());   
+	 //添加比例尺控件
+	map.addControl(new BMap.ScaleControl());  
+	//开启定位,用于移动端快速找到自己位置
+	map.addControl(new BMap.GeolocationControl());  
+</script>  
+</body>  
+</html>
